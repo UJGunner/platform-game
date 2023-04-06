@@ -48,13 +48,13 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile7`, function (sprite, location) {
-    if (info.score() >= 70) {
+    if (info.score() >= 75) {
         game.splash("level 2 complete")
-        level_number += 1
+        level_number = 3
         info.changeLifeBy(1)
     } else {
         game.splash("not enough points")
-        User.setPosition(38, 0)
+        tiles.placeOnRandomTile(User, assets.tile`myTile`)
     }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Pressure_plate, function (sprite, otherSprite) {
@@ -121,14 +121,17 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Pressure_plate, function (sprite
     missle.setPosition(User.x + 80, User.y - 40)
     missle.follow(User)
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile3`, function (sprite, location) {
+    User.y += -10
+})
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile2`, function (sprite, location) {
-    if (info.score() >= 60) {
+    if (info.score() >= 63) {
         game.splash("level 1 complete")
-        level_number += 1
+        level_number = 2
         info.changeLifeBy(1)
     } else {
-        game.splash("not enough points")
-        User.setPosition(38, 0)
+        game.splash("You need", 63 - info.score())
+        tiles.placeOnRandomTile(User, assets.tile`myTile`)
     }
 })
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.bullet, function (sprite, otherSprite) {
@@ -137,9 +140,23 @@ sprites.onOverlap(SpriteKind.Enemy, SpriteKind.bullet, function (sprite, otherSp
     info.changeScoreBy(3)
     missles += -1
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile10`, function (sprite, location) {
+    if (info.score() >= 85) {
+        level_number = 4
+        info.changeLifeBy(1)
+        game.gameOver(true)
+        game.setGameOverEffect(true, effects.confetti)
+    } else {
+        game.splash("not enough points")
+        pause(2000)
+        game.gameOver(false)
+        game.setGameOverEffect(false, effects.melt)
+    }
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprites.destroy(otherSprite)
     info.changeLifeBy(-1)
+    info.changeScoreBy(3)
 })
 let missle: Sprite = null
 let gun: Sprite = null
@@ -147,7 +164,8 @@ let trap: Sprite = null
 let portal_piece: Sprite = null
 let User: Sprite = null
 let missles = 0
-let level_number = 1
+let level_number = 0
+level_number = 1
 missles = 0
 info.setLife(3)
 scene.setBackgroundColor(9)
@@ -297,13 +315,13 @@ for (let value of tiles.getTilesByType(assets.tile`myTile5`)) {
     tiles.setTileAt(value, assets.tile`transparency16`)
 }
 pauseUntil(() => 2 == level_number)
-tiles.setCurrentTilemap(tilemap`level3`)
+tiles.setCurrentTilemap(tilemap`level10`)
+scene.cameraFollowSprite(User)
 tiles.placeOnRandomTile(User, assets.tile`myTile`)
 for (let value of tiles.getTilesByType(assets.tile`myTile`)) {
     tiles.setTileAt(value, assets.tile`transparency16`)
 }
 User.ay = 200
-scene.cameraFollowSprite(User)
 for (let value of tiles.getTilesByType(assets.tile`myTile4`)) {
     portal_piece = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -423,13 +441,13 @@ for (let value of tiles.getTilesByType(assets.tile`myTile5`)) {
     tiles.setTileAt(value, assets.tile`transparency16`)
 }
 pauseUntil(() => 3 == level_number)
+scene.cameraFollowSprite(User)
 tiles.setCurrentTilemap(tilemap`level3`)
 tiles.placeOnRandomTile(User, assets.tile`myTile`)
 for (let value of tiles.getTilesByType(assets.tile`myTile`)) {
     tiles.setTileAt(value, assets.tile`transparency16`)
 }
 User.ay = 200
-scene.cameraFollowSprite(User)
 for (let value of tiles.getTilesByType(assets.tile`myTile4`)) {
     portal_piece = sprites.create(img`
         . . . . . . . . . . . . . . . . 
